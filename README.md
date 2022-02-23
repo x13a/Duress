@@ -16,7 +16,7 @@ Duress password trigger.
      width="30%" 
      height="30%">
 
-Tiny app to listen for a duress password on the lockscreen.
+Tiny app to listen for a duress password on the lockscreen.  
 When found, the app will send a broadcast message to the selected receiver.
 
 ## Permissions
