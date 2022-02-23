@@ -17,11 +17,23 @@ Duress password trigger.
      height="30%">
 
 Tiny app to listen for a duress password on the lockscreen.  
-When found, the app will send a broadcast message to the selected receiver.
+When found, it can send a broadcast message to the selected receiver or wipe the device.
+
+## Wasted
+
+You have to set:
+
+* Action: `me.lucky.wasted.action.TRIGGER`
+* Receiver: `me.lucky.wasted/.TriggerReceiver`
+* Authentication code: a code from Wasted
+* Password length: your actual password len plus at least two!
+
+Do not forget to activate `Broadcast` trigger in Wasted.
 
 ## Permissions
 
-* ACCESSIBILITY - listen for a duress password
+* ACCESSIBILITY - listen for a duress password on the lockscreen
+* DEVICE_ADMIN - wipe the device (optional)
 
 ## License
 [![GNU GPLv3 Image](https://www.gnu.org/graphics/gplv3-127x51.png)](https://www.gnu.org/licenses/gpl-3.0.en.html)

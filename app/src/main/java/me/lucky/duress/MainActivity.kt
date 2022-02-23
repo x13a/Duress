@@ -4,20 +4,21 @@ import android.accessibilityservice.AccessibilityServiceInfo
 import android.content.Intent
 import android.os.Bundle
 import android.provider.Settings
+import android.view.View
 import android.view.accessibility.AccessibilityManager
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.widget.doAfterTextChanged
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.snackbar.Snackbar
+import com.google.android.material.tabs.TabLayout
 
 import me.lucky.duress.databinding.ActivityMainBinding
-import java.util.regex.Pattern
 
 class MainActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMainBinding
     private lateinit var prefs: Preferences
+    private val admin by lazy { DeviceAdminManager(this) }
     private var accessibilityManager: AccessibilityManager? = null
-    private val actionPatternRegex by lazy { Pattern.compile("^\\w+(\\.\\w+)+\$") }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -37,24 +38,37 @@ class MainActivity : AppCompatActivity() {
         prefs = Preferences(this)
         accessibilityManager = getSystemService(AccessibilityManager::class.java)
         binding.apply {
+            tabs.selectTab(tabs.getTabAt(prefs.mode))
             action.editText?.setText(prefs.action)
             receiver.editText?.setText(prefs.receiver)
             authenticationCode.editText?.setText(prefs.authenticationCode)
             passwordLen.editText?.setText(prefs.passwordLen.toString())
-            toggle.isChecked = prefs.isServiceEnabled
+            toggle.isChecked = prefs.isEnabled
         }
+        selectInterface()
     }
 
     private fun setup() {
         binding.apply {
-            action.editText?.doAfterTextChanged {
-                val str = it?.toString() ?: ""
-                if (actionPatternRegex.matcher(str).matches()) {
-                    prefs.action = str
-                    action.error = null
-                } else {
-                    action.error = getString(R.string.action_error)
+            tabs.addOnTabSelectedListener(object : TabLayout.OnTabSelectedListener {
+                override fun onTabSelected(tab: TabLayout.Tab?) {
+                    if (tab == null) return
+                    setOff()
+                    for (m in Mode.values()) {
+                        if (m.value == tab.position) {
+                            prefs.mode = m.value
+                            break
+                        }
+                    }
+                    selectInterface()
                 }
+
+                override fun onTabUnselected(tab: TabLayout.Tab?) {}
+                override fun onTabReselected(tab: TabLayout.Tab?) {}
+
+            })
+            action.editText?.doAfterTextChanged {
+                prefs.action = it?.toString() ?: ""
             }
             receiver.editText?.doAfterTextChanged {
                 prefs.receiver = it?.toString() ?: ""
@@ -68,15 +82,39 @@ class MainActivity : AppCompatActivity() {
                 } catch (exc: NumberFormatException) {}
             }
             toggle.setOnCheckedChangeListener { _, isChecked ->
-                prefs.isServiceEnabled = isChecked
-                if (isChecked && !hasPermissions())
-                    startActivity(Intent(Settings.ACTION_ACCESSIBILITY_SETTINGS))
+                if (isChecked && !hasPermissions()) {
+                    toggle.isChecked = false
+                    requestPermissions()
+                    return@setOnCheckedChangeListener
+                }
+                prefs.isEnabled = isChecked
             }
         }
     }
+    private fun selectInterface() {
+        val v = when (prefs.mode) {
+            Mode.BROADCAST.value -> View.VISIBLE
+            Mode.WIPE.value -> View.GONE
+            else -> View.GONE
+        }
+        binding.apply {
+            action.visibility = v
+            receiver.visibility = v
+            authenticationCode.visibility = v
+            space1.visibility = v
+            space2.visibility = v
+            space3.visibility = v
+        }
+    }
+
+    private fun setOff() {
+        prefs.isEnabled = false
+        binding.toggle.isChecked = false
+        try { admin.remove() } catch (exc: SecurityException) {}
+    }
 
     private fun update() {
-        if (prefs.isServiceEnabled && !hasPermissions())
+        if (prefs.isEnabled && !hasPermissions())
             Snackbar.make(
                 binding.toggle,
                 R.string.service_unavailable_popup,
@@ -97,7 +135,27 @@ class MainActivity : AppCompatActivity() {
             .show()
     }
 
+    private fun requestPermissions() {
+        if (!hasAccessibilityPermission()) {
+            requestAccessibilityPermission()
+            return
+        }
+        if (prefs.mode == Mode.WIPE.value && !hasAdminPermission()) requestAdminPermission()
+    }
+
+    private fun requestAccessibilityPermission() =
+        startActivity(Intent(Settings.ACTION_ACCESSIBILITY_SETTINGS))
+
+    private fun requestAdminPermission() = startActivity(admin.makeRequestIntent())
+
     private fun hasPermissions(): Boolean {
+        var ok = hasAccessibilityPermission()
+        if (prefs.mode == Mode.WIPE.value)
+            ok = ok && hasAdminPermission()
+        return ok
+    }
+
+    private fun hasAccessibilityPermission(): Boolean {
         for (info in accessibilityManager?.getEnabledAccessibilityServiceList(
             AccessibilityServiceInfo.FEEDBACK_GENERIC,
         ) ?: return true) {
@@ -105,4 +163,6 @@ class MainActivity : AppCompatActivity() {
         }
         return false
     }
+
+    private fun hasAdminPermission() = admin.isActive()
 }

@@ -7,7 +7,8 @@ import androidx.security.crypto.MasterKeys
 
 class Preferences(ctx: Context) {
     companion object {
-        private const val SERVICE_ENABLED = "service_enabled"
+        private const val ENABLED = "enabled"
+        private const val MODE = "mode"
         private const val ACTION = "action"
         private const val RECEIVER = "receiver"
         private const val AUTHENTICATION_CODE = "authentication_code"
@@ -15,6 +16,8 @@ class Preferences(ctx: Context) {
         private const val SHOW_PROMINENT_DISCLOSURE = "show_prominent_disclosure"
 
         private const val FILE_NAME = "sec_shared_prefs"
+        // migration
+        private const val SERVICE_ENABLED = "service_enabled"
     }
 
     private val mk = MasterKeys.getOrCreate(MasterKeys.AES256_GCM_SPEC)
@@ -26,9 +29,13 @@ class Preferences(ctx: Context) {
         EncryptedSharedPreferences.PrefValueEncryptionScheme.AES256_GCM,
     )
 
-    var isServiceEnabled: Boolean
-        get() = prefs.getBoolean(SERVICE_ENABLED, false)
-        set(value) = prefs.edit { putBoolean(SERVICE_ENABLED, value) }
+    var isEnabled: Boolean
+        get() = prefs.getBoolean(ENABLED, prefs.getBoolean(SERVICE_ENABLED, false))
+        set(value) = prefs.edit { putBoolean(ENABLED, value) }
+
+    var mode: Int
+        get() = prefs.getInt(MODE, Mode.BROADCAST.value)
+        set(value) = prefs.edit { putInt(MODE, value) }
 
     var action: String
         get() = prefs.getString(ACTION, "") ?: ""
@@ -49,4 +56,9 @@ class Preferences(ctx: Context) {
     var isShowProminentDisclosure: Boolean
         get() = prefs.getBoolean(SHOW_PROMINENT_DISCLOSURE, true)
         set(value) = prefs.edit { putBoolean(SHOW_PROMINENT_DISCLOSURE, value) }
+}
+
+enum class Mode(val value: Int) {
+    BROADCAST(0),
+    WIPE(1),
 }

@@ -12,6 +12,7 @@ class AccessibilityService : AccessibilityService() {
     }
 
     private lateinit var prefs: Preferences
+    private val admin by lazy { DeviceAdminManager(this) }
     private var keyguardManager: KeyguardManager? = null
 
     override fun onCreate() {
@@ -25,27 +26,44 @@ class AccessibilityService : AccessibilityService() {
     }
 
     override fun onAccessibilityEvent(event: AccessibilityEvent?) {
-        if (event?.isPassword != true ||
+        if (event?.isEnabled != true ||
+            !event.isPassword ||
             keyguardManager?.isDeviceLocked != true ||
-            !prefs.isServiceEnabled) return
+            !prefs.isEnabled) return
         val passwordLen = prefs.passwordLen
         if (passwordLen < MIN_PASSWORD_LEN ||
             event.text.size != 1 ||
             event.text[0].length < passwordLen) return
+        if (prefs.mode == Mode.WIPE.value) {
+            wipeData()
+            return
+        }
         val action = prefs.action
-        if (action.isBlank()) return
-        sendBroadcast(Intent(action).apply {
-            val cls = prefs.receiver.split('/')
-            val packageName = cls.firstOrNull() ?: ""
-            if (packageName.isNotBlank()) {
-                setPackage(packageName)
-                if (cls.size == 2) setClassName(packageName, "$packageName.${cls[1]}")
-            }
-            addFlags(Intent.FLAG_INCLUDE_STOPPED_PACKAGES)
-            val code = prefs.authenticationCode
-            if (code.isNotBlank()) putExtra(KEY, code)
-        })
+        if (action.isEmpty()) return
+        sendBroadcast(action)
     }
 
     override fun onInterrupt() {}
+
+    private fun sendBroadcast(action: String) {
+        sendBroadcast(Intent(action).apply {
+            val cls = prefs.receiver.split('/')
+            val packageName = cls.firstOrNull() ?: ""
+            if (packageName.isNotEmpty()) {
+                setPackage(packageName)
+                if (cls.size == 2)
+                    setClassName(
+                        packageName,
+                        "$packageName.${cls[1].trimStart('.')}",
+                    )
+            }
+            addFlags(Intent.FLAG_INCLUDE_STOPPED_PACKAGES)
+            val code = prefs.authenticationCode
+            if (code.isNotEmpty()) putExtra(KEY, code)
+        })
+    }
+
+    private fun wipeData() {
+        try { admin.wipeData() } catch (exc: SecurityException) {}
+    }
 }
