@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Duress</string>
+    <string name="description">Приложение будет ожидать пароль под принуждением на экране блокировки. Вы должны выдать разрешение на использование службы доступности.</string>
+    <string name="service_unavailable_popup">Служба доступности недоступна</string>
+    <string name="prominent_disclosure_title">Раскрытие Информации</string>
+    <string name="prominent_disclosure_message">Приложение использует службу доступности, чтобы ожидать пароль под принуждением на экране блокировки. Когда найдет, приложение отправит широковещательное сообщение выбранному получателю.</string>
+    <string name="accept">Принять</string>
+    <string name="exit">Выйти</string>
+    <string name="action">Действие *</string>
+    <string name="receiver">Получатель *</string>
+    <string name="authentication_code">Код аутентификации *</string>
+    <string name="password_len">Длинна пароля *</string>
+    <string name="action_error">me.package.name.action.HELLO</string>
+    <string name="receiver_error">me.package.name/MyReceiver</string>
+    <string name="authentication_code_error">Не пустой</string>
+    <string name="password_len_helper_text">Должна быть равной, как минимум, длинне вашего пароля плюс два.</string>
+</resources>

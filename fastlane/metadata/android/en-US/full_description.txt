@@ -1,0 +1,8 @@
+Tiny app to listen for a duress password on the lockscreen.
+When found, the app will send a broadcast message to the selected receiver.
+
+Permissions:
+* ACCESSIBILITY - listen for a duress password
+
+It is Free Open Source Software.
+License: GPL-3

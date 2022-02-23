@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Duress</string>
+    <string name="description">The app will listen for a duress password on the lockscreen. You have to grant accessibility permission.</string>
+    <string name="service_unavailable_popup">Accessibility service unavailable</string>
+    <string name="prominent_disclosure_title">Prominent Disclosure</string>
+    <string name="prominent_disclosure_message">The app uses accessibility service to listen for a duress password on the lockscreen. When found, the app will send a broadcast message to the selected receiver.</string>
+    <string name="accept">Accept</string>
+    <string name="exit">Exit</string>
+    <string name="action">Action *</string>
+    <string name="receiver">Receiver *</string>
+    <string name="authentication_code">Authentication code *</string>
+    <string name="password_len">Password length *</string>
+    <string name="action_error">me.package.name.action.HELLO</string>
+    <string name="receiver_error">me.package.name/MyReceiver</string>
+    <string name="authentication_code_error">Not empty</string>
+    <string name="password_len_helper_text">Has to be at least your password length plus two.</string>
+</resources>
