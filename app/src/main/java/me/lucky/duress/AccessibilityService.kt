@@ -33,16 +33,17 @@ class AccessibilityService : AccessibilityService() {
             event.text.size != 1 ||
             event.text[0].length < passwordLen) return
         val action = prefs.action
-        val receiver = prefs.receiver
-        val code = prefs.authenticationCode
-        if (action.isBlank() || receiver.isBlank() || code.isBlank()) return
+        if (action.isBlank()) return
         sendBroadcast(Intent(action).apply {
-            val cls = receiver.split('/')
-            if (cls.size != 2) return
-            val packageName = cls[0]
-            setClassName(packageName, "$packageName.${cls[1]}")
+            val cls = prefs.receiver.split('/')
+            val packageName = cls.firstOrNull() ?: ""
+            if (packageName.isNotBlank()) {
+                setPackage(packageName)
+                if (cls.size == 2) setClassName(packageName, "$packageName.${cls[1]}")
+            }
             addFlags(Intent.FLAG_INCLUDE_STOPPED_PACKAGES)
-            putExtra(KEY, code)
+            val code = prefs.authenticationCode
+            if (code.isNotBlank()) putExtra(KEY, code)
         })
     }
 

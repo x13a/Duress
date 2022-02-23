@@ -14,15 +14,10 @@ import me.lucky.duress.databinding.ActivityMainBinding
 import java.util.regex.Pattern
 
 class MainActivity : AppCompatActivity() {
-    companion object {
-        private const val ACTION_REGEX = "\\w+(\\.\\w+)+"
-    }
-
     private lateinit var binding: ActivityMainBinding
     private lateinit var prefs: Preferences
     private var accessibilityManager: AccessibilityManager? = null
-    private val actionPatternRegex by lazy { Pattern.compile("^$ACTION_REGEX\$") }
-    private val receiverPatternRegex by lazy { Pattern.compile("^$ACTION_REGEX/\\w+$") }
+    private val actionPatternRegex by lazy { Pattern.compile("^\\w+(\\.\\w+)+\$") }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -62,22 +57,10 @@ class MainActivity : AppCompatActivity() {
                 }
             }
             receiver.editText?.doAfterTextChanged {
-                val str = it?.toString() ?: ""
-                if (receiverPatternRegex.matcher(str).matches()) {
-                    prefs.receiver = str
-                    receiver.error = null
-                } else {
-                    receiver.error = getString(R.string.receiver_error)
-                }
+                prefs.receiver = it?.toString() ?: ""
             }
             authenticationCode.editText?.doAfterTextChanged {
-                val str = it?.toString() ?: ""
-                if (str.isNotBlank()) {
-                    prefs.authenticationCode = str
-                    authenticationCode.error = null
-                } else {
-                    authenticationCode.error = getString(R.string.authentication_code_error)
-                }
+                prefs.authenticationCode = it?.toString() ?: ""
             }
             passwordLen.editText?.doAfterTextChanged {
                 try {
