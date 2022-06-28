@@ -43,6 +43,11 @@ class MainActivity : AppCompatActivity() {
             receiver.editText?.setText(prefs.receiver)
             authenticationCode.editText?.setText(prefs.authenticationCode)
             passwordLen.editText?.setText(prefs.passwordLen.toString())
+            keyguardType.check(when (prefs.keyguardType) {
+                KeyguardType.A.value -> R.id.keyguardTypeA
+                KeyguardType.B.value -> R.id.keyguardTypeB
+                else -> R.id.keyguardTypeA
+            })
             toggle.isChecked = prefs.isEnabled
         }
         selectInterface()
@@ -80,6 +85,13 @@ class MainActivity : AppCompatActivity() {
                 try {
                     prefs.passwordLen = it?.toString()?.toInt() ?: return@doAfterTextChanged
                 } catch (exc: NumberFormatException) {}
+            }
+            keyguardType.setOnCheckedChangeListener { _, checkedId ->
+                prefs.keyguardType = when (checkedId) {
+                    R.id.keyguardTypeA -> KeyguardType.A.value
+                    R.id.keyguardTypeB -> KeyguardType.B.value
+                    else -> return@setOnCheckedChangeListener
+                }
             }
             toggle.setOnCheckedChangeListener { _, isChecked ->
                 if (isChecked && !hasPermissions()) {

@@ -1,0 +1,1 @@
+add samsung pin support (tab s8)

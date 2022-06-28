@@ -17,16 +17,16 @@ Duress password trigger.
      height="30%">
 
 Tiny app to listen for a duress password on the lockscreen.  
-When found, it can send a broadcast message to the selected receiver or wipe the device.
+When found, it can send a broadcast message or wipe the device.
 
 ## Wasted
 
 You have to set:
 
-* Action: `me.lucky.wasted.action.TRIGGER`
-* Receiver: `me.lucky.wasted/.TriggerReceiver`
-* Authentication code: a code from Wasted
-* Password length: your actual password len plus at least two!
+* action: `me.lucky.wasted.action.TRIGGER`
+* receiver: `me.lucky.wasted/.TriggerReceiver`
+* authentication code: the code from Wasted
+* password length: your actual password len plus at least two!
 
 Do not forget to activate `Broadcast` trigger in Wasted.
 

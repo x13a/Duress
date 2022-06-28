@@ -13,6 +13,7 @@ class Preferences(ctx: Context) {
         private const val RECEIVER = "receiver"
         private const val AUTHENTICATION_CODE = "authentication_code"
         private const val PASSWORD_LEN = "password_len"
+        private const val KEYGUARD_TYPE = "keyguard_type"
         private const val SHOW_PROMINENT_DISCLOSURE = "show_prominent_disclosure"
 
         private const val FILE_NAME = "sec_shared_prefs"
@@ -53,6 +54,10 @@ class Preferences(ctx: Context) {
         get() = prefs.getInt(PASSWORD_LEN, 0)
         set(value) = prefs.edit { putInt(PASSWORD_LEN, value) }
 
+    var keyguardType: Int
+        get() = prefs.getInt(KEYGUARD_TYPE, KeyguardType.A.value)
+        set(value) = prefs.edit { putInt(KEYGUARD_TYPE, value) }
+
     var isShowProminentDisclosure: Boolean
         get() = prefs.getBoolean(SHOW_PROMINENT_DISCLOSURE, true)
         set(value) = prefs.edit { putBoolean(SHOW_PROMINENT_DISCLOSURE, value) }
@@ -61,4 +66,9 @@ class Preferences(ctx: Context) {
 enum class Mode(val value: Int) {
     BROADCAST(0),
     WIPE(1),
+}
+
+enum class KeyguardType(val value: Int) {
+    A(0),
+    B(1),
 }

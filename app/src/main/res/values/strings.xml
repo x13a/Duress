@@ -3,14 +3,18 @@
     <string name="app_name">Duress</string>
     <string name="service_unavailable_popup">Service unavailable</string>
     <string name="prominent_disclosure_title">Prominent Disclosure</string>
-    <string name="prominent_disclosure_message">The app uses accessibility service to listen for a duress password on the lockscreen. When found, it can send a broadcast message to the selected receiver or wipe the device.</string>
+    <string name="prominent_disclosure_message">The app uses accessibility service to listen for a duress password on the lockscreen. When found, it can send a broadcast message or wipe the device.</string>
     <string name="accept">Accept</string>
     <string name="exit">Exit</string>
-    <string name="action">Action*</string>
-    <string name="receiver">Receiver</string>
-    <string name="authentication_code">Authentication code</string>
-    <string name="password_len">Password length*</string>
+    <string name="action">action*</string>
+    <string name="receiver">receiver</string>
+    <string name="authentication_code">authentication code</string>
+    <string name="password_len">password length*</string>
     <string name="password_len_helper_text">Has to be at least your password length plus two.</string>
     <string name="tab_broadcast">BROADCAST</string>
     <string name="tab_wipe">WIPE</string>
+    <string name="keyguard_type">Keyguard:</string>
+    <string name="keyguard_type_a">A</string>
+    <string name="keyguard_type_b">B</string>
+    <string name="keyguard_type_description">Change only if the default value is not working.</string>
 </resources>
