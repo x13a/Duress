@@ -8,7 +8,7 @@
     <string name="exit">Выйти</string>
     <string name="action">Действие *</string>
     <string name="receiver">Получатель</string>
-    <string name="authentication_code">Код аутентификации</string>
+    <string name="secret">Код аутентификации</string>
     <string name="password_len">Длинна пароля *</string>
     <string name="password_len_helper_text">Должна быть равной, как минимум, длинне вашего пароля плюс два.</string>
 </resources>

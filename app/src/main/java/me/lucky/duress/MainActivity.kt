@@ -8,6 +8,9 @@ import android.provider.Settings
 import android.view.View
 import android.view.accessibility.AccessibilityManager
 import androidx.appcompat.app.AppCompatActivity
+import androidx.biometric.BiometricManager
+import androidx.biometric.BiometricPrompt
+import androidx.core.content.ContextCompat
 import androidx.core.widget.doAfterTextChanged
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.snackbar.Snackbar
@@ -31,6 +34,7 @@ class MainActivity : AppCompatActivity() {
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
         init()
+        if (initBiometric()) return
         setup()
         if (prefs.isShowProminentDisclosure) showProminentDisclosure()
     }
@@ -51,11 +55,12 @@ class MainActivity : AppCompatActivity() {
         prefsdb = Preferences(this, encrypted = false)
         prefs.copyTo(prefsdb)
         accessibilityManager = getSystemService(AccessibilityManager::class.java)
+        selectInterface()
         binding.apply {
             tabs.selectTab(tabs.getTabAt(prefs.mode))
             action.editText?.setText(prefs.action)
             receiver.editText?.setText(prefs.receiver)
-            authenticationCode.editText?.setText(prefs.authenticationCode)
+            secret.editText?.setText(prefs.secret)
             passwordLen.editText?.setText(prefs.passwordLen.toString())
             keyguardType.check(when (prefs.keyguardType) {
                 KeyguardType.A.value -> R.id.keyguardTypeA
@@ -64,59 +69,91 @@ class MainActivity : AppCompatActivity() {
             })
             toggle.isChecked = prefs.isEnabled
         }
-        selectInterface()
     }
 
-    private fun setup() {
-        binding.apply {
-            tabs.addOnTabSelectedListener(object : TabLayout.OnTabSelectedListener {
-                override fun onTabSelected(tab: TabLayout.Tab?) {
-                    if (tab == null) return
-                    setOff()
-                    for (m in Mode.values()) {
-                        if (m.value == tab.position) {
-                            prefs.mode = m.value
-                            break
-                        }
-                    }
-                    selectInterface()
+    private fun initBiometric(): Boolean {
+        val authenticators = BiometricManager.Authenticators.BIOMETRIC_STRONG or
+                BiometricManager.Authenticators.DEVICE_CREDENTIAL
+        when (BiometricManager
+            .from(this)
+            .canAuthenticate(authenticators))
+        {
+            BiometricManager.BIOMETRIC_SUCCESS -> {}
+            else -> return false
+        }
+        val executor = ContextCompat.getMainExecutor(this)
+        val prompt = BiometricPrompt(
+            this,
+            executor,
+            object : BiometricPrompt.AuthenticationCallback()
+            {
+                override fun onAuthenticationError(errorCode: Int, errString: CharSequence) {
+                    super.onAuthenticationError(errorCode, errString)
+                    finishAndRemoveTask()
                 }
 
-                override fun onTabUnselected(tab: TabLayout.Tab?) {}
-                override fun onTabReselected(tab: TabLayout.Tab?) {}
-
+                override fun onAuthenticationSucceeded(result: BiometricPrompt.AuthenticationResult) {
+                    super.onAuthenticationSucceeded(result)
+                    setup()
+                    if (prefs.isShowProminentDisclosure) showProminentDisclosure()
+                }
             })
-            action.editText?.doAfterTextChanged {
-                prefs.action = it?.toString() ?: ""
-            }
-            receiver.editText?.doAfterTextChanged {
-                prefs.receiver = it?.toString() ?: ""
-            }
-            authenticationCode.editText?.doAfterTextChanged {
-                prefs.authenticationCode = it?.toString() ?: ""
-            }
-            passwordLen.editText?.doAfterTextChanged {
-                try {
-                    prefs.passwordLen = it?.toString()?.toInt() ?: return@doAfterTextChanged
-                } catch (exc: NumberFormatException) {}
-            }
-            keyguardType.setOnCheckedChangeListener { _, checkedId ->
-                prefs.keyguardType = when (checkedId) {
-                    R.id.keyguardTypeA -> KeyguardType.A.value
-                    R.id.keyguardTypeB -> KeyguardType.B.value
-                    else -> return@setOnCheckedChangeListener
+        prompt.authenticate(BiometricPrompt.PromptInfo.Builder()
+            .setTitle(getString(R.string.authentication))
+            .setConfirmationRequired(false)
+            .setAllowedAuthenticators(authenticators)
+            .build())
+        return true
+    }
+
+    private fun setup() = binding.apply {
+        tabs.addOnTabSelectedListener(object : TabLayout.OnTabSelectedListener {
+            override fun onTabSelected(tab: TabLayout.Tab?) {
+                if (tab == null) return
+                setOff()
+                for (m in Mode.values()) {
+                    if (m.value == tab.position) {
+                        prefs.mode = m.value
+                        break
+                    }
                 }
+                selectInterface()
             }
-            toggle.setOnCheckedChangeListener { _, isChecked ->
-                if (isChecked && !hasPermissions()) {
-                    toggle.isChecked = false
-                    requestPermissions()
-                    return@setOnCheckedChangeListener
-                }
-                prefs.isEnabled = isChecked
+
+            override fun onTabUnselected(tab: TabLayout.Tab?) {}
+            override fun onTabReselected(tab: TabLayout.Tab?) {}
+
+        })
+        action.editText?.doAfterTextChanged {
+            prefs.action = it?.toString()?.trim() ?: ""
+        }
+        receiver.editText?.doAfterTextChanged {
+            prefs.receiver = it?.toString()?.trim() ?: ""
+        }
+        secret.editText?.doAfterTextChanged {
+            prefs.secret = it?.toString()?.trim() ?: ""
+        }
+        passwordLen.editText?.doAfterTextChanged {
+            try { prefs.passwordLen = it?.toString()?.toInt() ?: return@doAfterTextChanged }
+            catch (exc: NumberFormatException) {}
+        }
+        keyguardType.setOnCheckedChangeListener { _, checkedId ->
+            prefs.keyguardType = when (checkedId) {
+                R.id.keyguardTypeA -> KeyguardType.A.value
+                R.id.keyguardTypeB -> KeyguardType.B.value
+                else -> return@setOnCheckedChangeListener
             }
         }
+        toggle.setOnCheckedChangeListener { _, isChecked ->
+            if (isChecked && !hasPermissions()) {
+                toggle.isChecked = false
+                requestPermissions()
+                return@setOnCheckedChangeListener
+            }
+            prefs.isEnabled = isChecked
+        }
     }
+
     private fun selectInterface() {
         val v = when (prefs.mode) {
             Mode.BROADCAST.value -> View.VISIBLE
@@ -126,7 +163,7 @@ class MainActivity : AppCompatActivity() {
         binding.apply {
             action.visibility = v
             receiver.visibility = v
-            authenticationCode.visibility = v
+            secret.visibility = v
             space1.visibility = v
             space2.visibility = v
             space3.visibility = v
@@ -135,8 +172,8 @@ class MainActivity : AppCompatActivity() {
 
     private fun setOff() {
         prefs.isEnabled = false
-        binding.toggle.isChecked = false
         try { admin.remove() } catch (exc: SecurityException) {}
+        binding.toggle.isChecked = false
     }
 
     private fun update() {
@@ -148,7 +185,7 @@ class MainActivity : AppCompatActivity() {
             ).show()
     }
 
-    private fun showProminentDisclosure() {
+    private fun showProminentDisclosure() =
         MaterialAlertDialogBuilder(this)
             .setTitle(R.string.prominent_disclosure_title)
             .setMessage(R.string.prominent_disclosure_message)
@@ -159,7 +196,6 @@ class MainActivity : AppCompatActivity() {
                 finishAndRemoveTask()
             }
             .show()
-    }
 
     private fun requestPermissions() {
         if (!hasAccessibilityPermission()) {

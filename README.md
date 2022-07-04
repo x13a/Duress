@@ -35,6 +35,13 @@ Do not forget to activate `Broadcast` trigger in Wasted.
 * ACCESSIBILITY - listen for a duress password on the lockscreen
 * DEVICE_ADMIN - wipe the device (optional)
 
+## Related
+
+* [pam_panic](https://github.com/pampanic/pam_panic)
+* [pam-party](https://github.com/x13a/pam-party)
+* [lockup](https://github.com/nekohasekai/lockup)
+* [pam-duress](https://github.com/nuvious/pam-duress)
+
 ## License
 [![GNU GPLv3 Image](https://www.gnu.org/graphics/gplv3-127x51.png)](https://www.gnu.org/licenses/gpl-3.0.en.html)
 

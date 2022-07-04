@@ -66,6 +66,15 @@ class AccessibilityService : AccessibilityService() {
 
     override fun onInterrupt() {}
 
+    override fun onServiceConnected() {
+        super.onServiceConnected()
+        if (prefs.keyguardType != KeyguardType.B.value) return
+        serviceInfo = serviceInfo.apply {
+            eventTypes = AccessibilityEvent.TYPE_VIEW_CLICKED or
+                AccessibilityEvent.TYPE_VIEW_LONG_CLICKED
+        }
+    }
+
     private fun checkKeyguardTypeA(event: AccessibilityEvent): Boolean {
         if (event.eventType != AccessibilityEvent.TYPE_VIEW_TEXT_CHANGED ||
             !event.isPassword) return false
@@ -106,8 +115,8 @@ class AccessibilityService : AccessibilityService() {
                     )
             }
             addFlags(Intent.FLAG_INCLUDE_STOPPED_PACKAGES)
-            val code = prefs.authenticationCode
-            if (code.isNotEmpty()) putExtra(KEY, code)
+            val secret = prefs.secret
+            if (secret.isNotEmpty()) putExtra(KEY, secret)
         })
     }
 
