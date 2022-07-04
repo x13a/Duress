@@ -2,6 +2,7 @@ package me.lucky.duress
 
 import android.accessibilityservice.AccessibilityServiceInfo
 import android.content.Intent
+import android.content.SharedPreferences
 import android.os.Bundle
 import android.provider.Settings
 import android.view.View
@@ -17,8 +18,13 @@ import me.lucky.duress.databinding.ActivityMainBinding
 class MainActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMainBinding
     private lateinit var prefs: Preferences
+    private lateinit var prefsdb: Preferences
     private val admin by lazy { DeviceAdminManager(this) }
     private var accessibilityManager: AccessibilityManager? = null
+
+    private val prefsListener = SharedPreferences.OnSharedPreferenceChangeListener { _, key ->
+        prefs.copyTo(prefsdb, key)
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -31,11 +37,19 @@ class MainActivity : AppCompatActivity() {
 
     override fun onStart() {
         super.onStart()
+        prefs.registerListener(prefsListener)
         update()
+    }
+
+    override fun onStop() {
+        super.onStop()
+        prefs.unregisterListener(prefsListener)
     }
 
     private fun init() {
         prefs = Preferences(this)
+        prefsdb = Preferences(this, encrypted = false)
+        prefs.copyTo(prefsdb)
         accessibilityManager = getSystemService(AccessibilityManager::class.java)
         binding.apply {
             tabs.selectTab(tabs.getTabAt(prefs.mode))

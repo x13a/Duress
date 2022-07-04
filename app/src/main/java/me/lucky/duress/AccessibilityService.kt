@@ -34,7 +34,7 @@ class AccessibilityService : AccessibilityService() {
     }
 
     private fun init() {
-        prefs = Preferences(this)
+        prefs = Preferences.new(this)
         keyguardManager = getSystemService(KeyguardManager::class.java)
         registerReceiver(lockReceiver, IntentFilter().apply {
             addAction(Intent.ACTION_USER_PRESENT)
