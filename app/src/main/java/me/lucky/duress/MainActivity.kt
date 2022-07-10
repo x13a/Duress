@@ -33,8 +33,9 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
-        init()
+        init1()
         if (initBiometric()) return
+        init2()
         setup()
         if (prefs.isShowProminentDisclosure) showProminentDisclosure()
     }
@@ -50,11 +51,14 @@ class MainActivity : AppCompatActivity() {
         prefs.unregisterListener(prefsListener)
     }
 
-    private fun init() {
+    private fun init1() {
         prefs = Preferences(this)
         prefsdb = Preferences(this, encrypted = false)
         prefs.copyTo(prefsdb)
         accessibilityManager = getSystemService(AccessibilityManager::class.java)
+    }
+
+    private fun init2() {
         selectInterface()
         binding.apply {
             tabs.selectTab(tabs.getTabAt(prefs.mode))
@@ -94,15 +98,18 @@ class MainActivity : AppCompatActivity() {
 
                 override fun onAuthenticationSucceeded(result: BiometricPrompt.AuthenticationResult) {
                     super.onAuthenticationSucceeded(result)
+                    init2()
                     setup()
                     if (prefs.isShowProminentDisclosure) showProminentDisclosure()
                 }
             })
-        prompt.authenticate(BiometricPrompt.PromptInfo.Builder()
-            .setTitle(getString(R.string.authentication))
-            .setConfirmationRequired(false)
-            .setAllowedAuthenticators(authenticators)
-            .build())
+        try {
+            prompt.authenticate(BiometricPrompt.PromptInfo.Builder()
+                .setTitle(getString(R.string.authentication))
+                .setConfirmationRequired(false)
+                .setAllowedAuthenticators(authenticators)
+                .build())
+        } catch (exc: Exception) { return false }
         return true
     }
 
