@@ -16,6 +16,7 @@ import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.snackbar.Snackbar
 import com.google.android.material.tabs.TabLayout
 
+import me.lucky.duress.admin.DeviceAdminManager
 import me.lucky.duress.databinding.ActivityMainBinding
 
 class MainActivity : AppCompatActivity() {
@@ -56,6 +57,7 @@ class MainActivity : AppCompatActivity() {
         prefsdb = Preferences(this, encrypted = false)
         prefs.copyTo(prefsdb)
         accessibilityManager = getSystemService(AccessibilityManager::class.java)
+        NotificationManager(this).createNotificationChannels()
     }
 
     private fun init2() {
@@ -90,19 +92,19 @@ class MainActivity : AppCompatActivity() {
             this,
             executor,
             object : BiometricPrompt.AuthenticationCallback()
-            {
-                override fun onAuthenticationError(errorCode: Int, errString: CharSequence) {
-                    super.onAuthenticationError(errorCode, errString)
-                    finishAndRemoveTask()
-                }
+        {
+            override fun onAuthenticationError(errorCode: Int, errString: CharSequence) {
+                super.onAuthenticationError(errorCode, errString)
+                finishAndRemoveTask()
+            }
 
-                override fun onAuthenticationSucceeded(result: BiometricPrompt.AuthenticationResult) {
-                    super.onAuthenticationSucceeded(result)
-                    init2()
-                    setup()
-                    if (prefs.isShowProminentDisclosure) showProminentDisclosure()
-                }
-            })
+            override fun onAuthenticationSucceeded(result: BiometricPrompt.AuthenticationResult) {
+                super.onAuthenticationSucceeded(result)
+                init2()
+                setup()
+                if (prefs.isShowProminentDisclosure) showProminentDisclosure()
+            }
+        })
         try {
             prompt.authenticate(BiometricPrompt.PromptInfo.Builder()
                 .setTitle(getString(R.string.authentication))
@@ -165,6 +167,7 @@ class MainActivity : AppCompatActivity() {
         val v = when (prefs.mode) {
             Mode.BROADCAST.value -> View.VISIBLE
             Mode.WIPE.value -> View.GONE
+            Mode.TEST.value -> View.GONE
             else -> View.GONE
         }
         binding.apply {

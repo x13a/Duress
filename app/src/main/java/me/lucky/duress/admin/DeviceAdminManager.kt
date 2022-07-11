@@ -1,4 +1,4 @@
-package me.lucky.duress
+package me.lucky.duress.admin
 
 import android.app.admin.DevicePolicyManager
 import android.content.ComponentName

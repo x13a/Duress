@@ -105,6 +105,7 @@ class Preferences(ctx: Context, encrypted: Boolean = true) {
 enum class Mode(val value: Int) {
     BROADCAST(0),
     WIPE(1),
+    TEST(2),
 }
 
 enum class KeyguardType(val value: Int) {

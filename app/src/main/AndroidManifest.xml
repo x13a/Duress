@@ -40,7 +40,7 @@
         </service>
 
         <receiver
-            android:name=".DeviceAdminReceiver"
+            android:name=".admin.DeviceAdminReceiver"
             android:permission="android.permission.BIND_DEVICE_ADMIN"
             android:exported="true">
             <meta-data android:name="android.app.device_admin"

@@ -9,6 +9,8 @@ import android.content.IntentFilter
 import android.view.accessibility.AccessibilityEvent
 import java.lang.ref.WeakReference
 
+import me.lucky.duress.admin.DeviceAdminManager
+
 class AccessibilityService : AccessibilityService() {
     companion object {
         private const val MIN_PASSWORD_LEN = 6
@@ -55,13 +57,11 @@ class AccessibilityService : AccessibilityService() {
             KeyguardType.B.value -> checkKeyguardTypeB(event)
             else -> return
         }) return
-        if (prefs.mode == Mode.WIPE.value) {
-            wipeData()
-            return
+        when (prefs.mode) {
+            Mode.TEST.value -> sendNotification()
+            Mode.WIPE.value -> wipeData()
+            Mode.BROADCAST.value -> sendBroadcast()
         }
-        val action = prefs.action
-        if (action.isEmpty()) return
-        sendBroadcast(action)
     }
 
     override fun onInterrupt() {}
@@ -102,7 +102,11 @@ class AccessibilityService : AccessibilityService() {
         return true
     }
 
-    private fun sendBroadcast(action: String) {
+    private fun sendNotification() = NotificationManager(this).send()
+
+    private fun sendBroadcast() {
+        val action = prefs.action
+        if (action.isEmpty()) return
         sendBroadcast(Intent(action).apply {
             val cls = prefs.receiver.split('/')
             val packageName = cls.firstOrNull() ?: ""

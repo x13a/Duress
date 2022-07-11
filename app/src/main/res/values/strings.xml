@@ -13,9 +13,12 @@
     <string name="password_len_helper_text">Has to be at least your password length plus two.</string>
     <string name="tab_broadcast">BROADCAST</string>
     <string name="tab_wipe">WIPE</string>
+    <string name="tab_test">TEST</string>
     <string name="keyguard_type">Keyguard:</string>
     <string name="keyguard_type_a">A</string>
     <string name="keyguard_type_b">B</string>
     <string name="keyguard_type_description">Change only if the default value does not work.</string>
     <string name="authentication">Authentication</string>
+    <string name="notification_channel_default_name">Default</string>
+    <string name="notification_title">Test</string>
 </resources>
