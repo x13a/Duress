@@ -1,14 +1,10 @@
 Tiny app to listen for a duress password on the lockscreen.
 When found, it can send a broadcast message or wipe the device.
 
-Wasted:
-
-* action: "me.lucky.wasted.action.TRIGGER"
-* receiver: "me.lucky.wasted/.TriggerReceiver"
-* authentication code: the code from Wasted
-* password length: your actual password len plus at least two!
-
-Do not forget to activate "Broadcast" trigger in Wasted.
+Tested:
+* Emulator, Android 12
+* Google Pixel 4a/5a, Android 12
+* Samsung Tab S8, Android 12
 
 Permissions:
 * ACCESSIBILITY - listen for a duress password on the lockscreen

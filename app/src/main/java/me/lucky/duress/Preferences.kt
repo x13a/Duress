@@ -16,7 +16,7 @@ class Preferences(ctx: Context, encrypted: Boolean = true) {
         private const val ACTION = "action"
         private const val RECEIVER = "receiver"
         private const val SECRET = "secret"
-        private const val PASSWORD_LEN = "password_len"
+        private const val PASSWORD_OR_LEN = "password_or_len"
         private const val KEYGUARD_TYPE = "keyguard_type"
         private const val SHOW_PROMINENT_DISCLOSURE = "show_prominent_disclosure"
 
@@ -24,6 +24,7 @@ class Preferences(ctx: Context, encrypted: Boolean = true) {
         // migration
         private const val SERVICE_ENABLED = "service_enabled"
         private const val AUTHENTICATION_CODE = "authentication_code"
+        private const val PASSWORD_LEN = "password_len"
 
         fun new(ctx: Context) = Preferences(
             ctx,
@@ -64,15 +65,12 @@ class Preferences(ctx: Context, encrypted: Boolean = true) {
         set(value) = prefs.edit { putString(RECEIVER, value) }
 
     var secret: String
-        get() = prefs.getString(
-            SECRET,
-            prefs.getString(AUTHENTICATION_CODE, "") ?: "",
-        ) ?: ""
+        get() = prefs.getString(SECRET, prefs.getString(AUTHENTICATION_CODE, "")) ?: ""
         set(value) = prefs.edit { putString(SECRET, value) }
 
-    var passwordLen: Int
-        get() = prefs.getInt(PASSWORD_LEN, 0)
-        set(value) = prefs.edit { putInt(PASSWORD_LEN, value) }
+    var passwordOrLen: String
+        get() = prefs.getString(PASSWORD_OR_LEN, prefs.getString(PASSWORD_LEN, "")) ?: ""
+        set(value) = prefs.edit { putString(PASSWORD_OR_LEN, value) }
 
     var keyguardType: Int
         get() = prefs.getInt(KEYGUARD_TYPE, KeyguardType.A.value)

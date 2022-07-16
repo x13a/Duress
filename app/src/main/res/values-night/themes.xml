@@ -9,4 +9,8 @@
         <item name="colorOnSecondary">@color/black</item>
         <!-- Customize your theme here. -->
     </style>
+
+    <style name="Theme.Duress.ToggleButton" parent="Theme.Duress">
+        <item name="colorAccent">@color/green_500</item>
+    </style>
 </resources>

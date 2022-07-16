@@ -67,7 +67,7 @@ class MainActivity : AppCompatActivity() {
             action.editText?.setText(prefs.action)
             receiver.editText?.setText(prefs.receiver)
             secret.editText?.setText(prefs.secret)
-            passwordLen.editText?.setText(prefs.passwordLen.toString())
+            passwordOrLen.editText?.setText(prefs.passwordOrLen)
             keyguardType.check(when (prefs.keyguardType) {
                 KeyguardType.A.value -> R.id.keyguardTypeA
                 KeyguardType.B.value -> R.id.keyguardTypeB
@@ -142,9 +142,8 @@ class MainActivity : AppCompatActivity() {
         secret.editText?.doAfterTextChanged {
             prefs.secret = it?.toString()?.trim() ?: ""
         }
-        passwordLen.editText?.doAfterTextChanged {
-            try { prefs.passwordLen = it?.toString()?.toInt() ?: return@doAfterTextChanged }
-            catch (exc: NumberFormatException) {}
+        passwordOrLen.editText?.doAfterTextChanged {
+            prefs.passwordOrLen = it?.toString()?.trim() ?: ""
         }
         keyguardType.setOnCheckedChangeListener { _, checkedId ->
             prefs.keyguardType = when (checkedId) {

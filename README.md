@@ -19,16 +19,11 @@ Duress password trigger.
 Tiny app to listen for a duress password on the lockscreen.  
 When found, it can send a broadcast message or wipe the device.
 
-## Wasted
+## Tested
 
-You have to set:
-
-* action: `me.lucky.wasted.action.TRIGGER`
-* receiver: `me.lucky.wasted/.TriggerReceiver`
-* authentication code: the code from Wasted
-* password length: your actual password len plus at least two!
-
-Do not forget to activate `Broadcast` trigger in Wasted.
+* Emulator, Android 12
+* Google Pixel 4a/5a, Android 12
+* Samsung Tab S8, Android 12
 
 ## Permissions
 
@@ -43,9 +38,5 @@ Do not forget to activate `Broadcast` trigger in Wasted.
 * [pam-duress](https://github.com/nuvious/pam-duress)
 
 ## License
-[![GNU GPLv3 Image](https://www.gnu.org/graphics/gplv3-127x51.png)](https://www.gnu.org/licenses/gpl-3.0.en.html)
 
-This application is Free Software: You can use, study share and improve it at your will.
-Specifically you can redistribute and/or modify it under the terms of the
-[GNU General Public License v3](https://www.gnu.org/licenses/gpl.html) as published by the Free
-Software Foundation.
+[![GNU GPLv3 Image](https://www.gnu.org/graphics/gplv3-127x51.png)](https://www.gnu.org/licenses/gpl-3.0.en.html)

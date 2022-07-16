@@ -18,7 +18,7 @@ class NotificationManager(private val ctx: Context) {
         manager.createNotificationChannel(
             NotificationChannelCompat.Builder(
             CHANNEL_DEFAULT_ID,
-            NotificationManagerCompat.IMPORTANCE_LOW,
+            NotificationManagerCompat.IMPORTANCE_HIGH,
         ).setName(ctx.getString(R.string.notification_channel_default_name)).build())
     }
 
@@ -29,7 +29,7 @@ class NotificationManager(private val ctx: Context) {
                 .setSmallIcon(R.drawable.ic_launcher_foreground)
                 .setContentTitle(ctx.getString(R.string.notification_title))
                 .setContentText(ctx.getString(android.R.string.ok))
-                .setPriority(NotificationCompat.PRIORITY_LOW)
+                .setPriority(NotificationCompat.PRIORITY_HIGH)
                 .setCategory(NotificationCompat.CATEGORY_STATUS)
                 .setShowWhen(true)
                 .setAutoCancel(true)

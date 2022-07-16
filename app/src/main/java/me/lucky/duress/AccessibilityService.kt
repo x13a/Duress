@@ -1,6 +1,7 @@
 package me.lucky.duress
 
 import android.accessibilityservice.AccessibilityService
+import android.accessibilityservice.AccessibilityServiceInfo
 import android.app.KeyguardManager
 import android.content.BroadcastReceiver
 import android.content.Context
@@ -13,17 +14,23 @@ import me.lucky.duress.admin.DeviceAdminManager
 
 class AccessibilityService : AccessibilityService() {
     companion object {
-        private const val MIN_PASSWORD_LEN = 6
+        private const val MIN_KEYGUARD_LEN = 4
+        private const val MIN_LEN = MIN_KEYGUARD_LEN + 2
         private const val KEY = "code"
-        private const val BUTTON_DELETE_TEXT = "DELETE"
-        private const val BUTTON_OK_TEXT = "OK"
+        private const val BUTTON_DELETE_DESC = "delete"
+        private const val BUTTON_OK_DESC = "ok"
+        private const val BUTTON_ENTER_DESC = "enter"
+        private const val WRONG_TEXT = "wrong"
+        private const val INCORRECT_TEXT = "incorrect"
+        private const val IGNORE_CHAR = '•'
     }
 
     private lateinit var prefs: Preferences
     private val admin by lazy { DeviceAdminManager(this) }
     private val lockReceiver = LockReceiver(WeakReference(this))
     private var keyguardManager: KeyguardManager? = null
-    private var enteredPwLen = 0
+    private var pos = 0
+    private var counter = mutableListOf<Boolean>()
 
     override fun onCreate() {
         super.onCreate()
@@ -68,38 +75,138 @@ class AccessibilityService : AccessibilityService() {
 
     override fun onServiceConnected() {
         super.onServiceConnected()
-        if (prefs.keyguardType != KeyguardType.B.value) return
-        serviceInfo = serviceInfo.apply {
-            eventTypes = AccessibilityEvent.TYPE_VIEW_CLICKED or
-                AccessibilityEvent.TYPE_VIEW_LONG_CLICKED
-        }
+        val kg = prefs.keyguardType
+        if (kg == KeyguardType.A.value)
+            serviceInfo = serviceInfo.apply {
+                eventTypes = AccessibilityEvent.TYPE_VIEW_TEXT_CHANGED or
+                    AccessibilityEvent.TYPE_VIEW_TEXT_SELECTION_CHANGED
+                flags = AccessibilityServiceInfo.FLAG_RETRIEVE_INTERACTIVE_WINDOWS
+            }
+        else if (kg == KeyguardType.B.value)
+            serviceInfo = serviceInfo.apply {
+                eventTypes = AccessibilityEvent.TYPE_VIEW_CLICKED or
+                    AccessibilityEvent.TYPE_VIEW_LONG_CLICKED or
+                    AccessibilityEvent.TYPE_ANNOUNCEMENT
+            }
     }
 
     private fun checkKeyguardTypeA(event: AccessibilityEvent): Boolean {
-        if (event.eventType != AccessibilityEvent.TYPE_VIEW_TEXT_CHANGED ||
-            !event.isPassword) return false
-        val passwordLen = prefs.passwordLen
-        if (passwordLen < MIN_PASSWORD_LEN ||
-            event.text.size != 1 ||
-            event.text[0].length < passwordLen) return false
-        return true
+        if (event.eventType != AccessibilityEvent.TYPE_VIEW_TEXT_CHANGED &&
+            event.eventType != AccessibilityEvent.TYPE_VIEW_TEXT_SELECTION_CHANGED) return false
+        val passwordOrLen = prefs.passwordOrLen
+        return when (passwordOrLen.length < MIN_KEYGUARD_LEN) {
+            true -> checkKeyguardTypeAbyLen(event, passwordOrLen.toIntOrNull() ?: return false)
+            false -> checkKeyguardTypeAbyPassword(event, passwordOrLen)
+        }
+    }
+
+    private fun checkKeyguardTypeAbyLen(event: AccessibilityEvent, len: Int) =
+        len >= MIN_LEN && event.text.size == 1 && event.text[0].length >= len
+
+    private fun checkKeyguardTypeAbyPassword(event: AccessibilityEvent, pw: String): Boolean {
+        if (event.text.isEmpty()) {
+            reset()
+            return false
+        }
+        val text = event.text[0]
+        if (pos > text.length) {
+            if (pos > 0) {
+                pos--
+                counter.removeAt(pos)
+            }
+            return false
+        }
+        val c = text.elementAtOrNull(pos) ?: return false
+        if (c == IGNORE_CHAR) return false
+        var ok = false
+        counter.add(pos < pw.length && pw[pos] == c)
+        pos++
+        if (pos == pw.length) ok = counter.all { it }
+        return ok
     }
 
     private fun checkKeyguardTypeB(event: AccessibilityEvent): Boolean {
         if (event.eventType != AccessibilityEvent.TYPE_VIEW_CLICKED &&
-            event.eventType != AccessibilityEvent.TYPE_VIEW_LONG_CLICKED) return false
-        val passwordLen = prefs.passwordLen
-        if (passwordLen < MIN_PASSWORD_LEN || event.text.size != 1) return false
-        when (event.contentDescription.toString()) {
-            BUTTON_DELETE_TEXT -> {
-                if (event.eventType == AccessibilityEvent.TYPE_VIEW_LONG_CLICKED) enteredPwLen = 0
-                else if (enteredPwLen > 0) enteredPwLen -= 1
-            }
-            BUTTON_OK_TEXT -> enteredPwLen = 0
-            else -> enteredPwLen += 1
+            event.eventType != AccessibilityEvent.TYPE_VIEW_LONG_CLICKED &&
+            event.eventType != AccessibilityEvent.TYPE_ANNOUNCEMENT) return false
+        val passwordOrLen = prefs.passwordOrLen
+        return when (passwordOrLen.length < MIN_KEYGUARD_LEN) {
+            true -> checkKeyguardTypeBbyLen(event, passwordOrLen.toIntOrNull() ?: return false)
+            false -> checkKeyguardTypeBbyPassword(event, passwordOrLen)
         }
-        if (enteredPwLen < passwordLen) return false
-        return true
+    }
+
+    private fun checkKeyguardTypeBbyLen(event: AccessibilityEvent, len: Int): Boolean {
+        if (len < MIN_LEN) return false
+        var ok = false
+        if (event.eventType == AccessibilityEvent.TYPE_ANNOUNCEMENT) {
+            if (event.text.size != 1) return false
+            val text = event.text[0]
+            if (text.startsWith(WRONG_TEXT, true) ||
+                text.startsWith(INCORRECT_TEXT, true))
+            {
+                ok = pos >= len
+                pos = 0
+            }
+            return ok
+        }
+        when (event.contentDescription?.toString()?.lowercase()) {
+            BUTTON_DELETE_DESC -> {
+                if (event.eventType == AccessibilityEvent.TYPE_VIEW_LONG_CLICKED) pos = 0
+                else if (pos > 0) pos--
+            }
+            BUTTON_OK_DESC, BUTTON_ENTER_DESC -> {
+                ok = pos >= len
+                pos = 0
+            }
+            null -> pos = 0
+            else -> {
+                pos++
+                ok = pos >= len
+            }
+        }
+        return ok
+    }
+
+    private fun checkKeyguardTypeBbyPassword(event: AccessibilityEvent, pw: String): Boolean {
+        var ok = false
+        if (event.eventType == AccessibilityEvent.TYPE_ANNOUNCEMENT) {
+            if (event.text.size != 1) return false
+            val text = event.text[0]
+            if (text.startsWith(WRONG_TEXT, true) ||
+                text.startsWith(INCORRECT_TEXT, true))
+            {
+                if (pos == pw.length) ok = counter.all { it }
+                reset()
+            }
+            return ok
+        }
+        when (event.contentDescription?.toString()?.lowercase()) {
+            BUTTON_DELETE_DESC -> {
+                if (event.eventType == AccessibilityEvent.TYPE_VIEW_LONG_CLICKED) {
+                    reset()
+                } else if (pos > 0) {
+                    pos--
+                    counter.removeAt(pos)
+                }
+            }
+            BUTTON_OK_DESC, BUTTON_ENTER_DESC -> {
+                if (pos == pw.length) ok = counter.all { it }
+                reset()
+            }
+            null -> reset()
+            else -> {
+                counter.add(pos < pw.length && pw[pos] == event.contentDescription.firstOrNull())
+                pos++
+                if (pos == pw.length) ok = counter.all { it }
+            }
+        }
+        return ok
+    }
+
+    private fun reset() {
+        pos = 0
+        counter.clear()
     }
 
     private fun sendNotification() = NotificationManager(this).send()
@@ -124,9 +231,7 @@ class AccessibilityService : AccessibilityService() {
         })
     }
 
-    private fun wipeData() {
-        try { admin.wipeData() } catch (exc: SecurityException) {}
-    }
+    private fun wipeData() = try { admin.wipeData() } catch (exc: SecurityException) {}
 
     private class LockReceiver(
         private val service: WeakReference<me.lucky.duress.AccessibilityService>,
@@ -134,7 +239,7 @@ class AccessibilityService : AccessibilityService() {
         override fun onReceive(context: Context?, intent: Intent?) {
             if (intent?.action != Intent.ACTION_USER_PRESENT &&
                 intent?.action != Intent.ACTION_SCREEN_OFF) return
-            service.get()?.enteredPwLen = 0
+            service.get()?.reset()
         }
     }
 }
