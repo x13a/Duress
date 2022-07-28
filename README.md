@@ -32,9 +32,6 @@ When found, it can send a broadcast message or wipe the device.
 
 ## Localization
 
-Is `Duress` not in your language, or the translation is incorrect or incomplete? Get involved on 
-[Crowdin](https://crwd.in/me-lucky-duress).
-
 [<img 
       src="https://user-images.githubusercontent.com/53379023/153461055-50169c86-b187-40c7-8ec8-97d5e93660b8.png" 
       alt="Crowdin" 
