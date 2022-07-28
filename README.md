@@ -39,6 +39,7 @@ When found, it can send a broadcast message or wipe the device.
 
 ## Related
 
+* [pam_duress](https://github.com/rafket/pam_duress)
 * [pam_panic](https://github.com/pampanic/pam_panic)
 * [pam-party](https://github.com/x13a/pam-party)
 * [lockup](https://github.com/nekohasekai/lockup)
