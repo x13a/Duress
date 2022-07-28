@@ -12,7 +12,7 @@ Duress password trigger.
       height="80">](https://play.google.com/store/apps/details?id=me.lucky.duress)
 
 <img 
-     src="https://raw.githubusercontent.com/x13a/Duress/main/fastlane/metadata/android/en-US/images/phoneScreenshots/1.png" 
+     src="fastlane/metadata/android/en-US/images/phoneScreenshots/1.png" 
      width="30%" 
      height="30%">
 
