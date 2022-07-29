@@ -12,7 +12,7 @@ Duress password trigger.
       height="80">](https://play.google.com/store/apps/details?id=me.lucky.duress)
 
 <img 
-     src="https://raw.githubusercontent.com/x13a/Duress/main/fastlane/metadata/android/en-US/images/phoneScreenshots/1.png" 
+     src="fastlane/metadata/android/en-US/images/phoneScreenshots/1.png" 
      width="30%" 
      height="30%">
 
@@ -30,8 +30,16 @@ When found, it can send a broadcast message or wipe the device.
 * ACCESSIBILITY - listen for a duress password on the lockscreen
 * DEVICE_ADMIN - wipe the device (optional)
 
+## Localization
+
+[<img 
+     height="51" 
+     src="https://badges.crowdin.net/badge/dark/crowdin-on-light@2x.png" 
+     alt="Crowdin">](https://crwd.in/me-lucky-duress)
+
 ## Related
 
+* [pam_duress](https://github.com/rafket/pam_duress)
 * [pam_panic](https://github.com/pampanic/pam_panic)
 * [pam-party](https://github.com/x13a/pam-party)
 * [lockup](https://github.com/nekohasekai/lockup)
