@@ -1,0 +1,5 @@
+custom extra key
+prepare Android 13
+add Ukrainian translation, thanks to GNCanva
+add French translation, thanks to Nathanaël Gagnepain (@Ilithy)
+add Chinese Traditional translation, thanks to rdol724

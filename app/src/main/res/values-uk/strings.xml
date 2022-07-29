@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Duress</string>
+    <string name="service_unavailable_popup">Сервіс недоступний</string>
+    <string name="prominent_disclosure_title">Помітне розкриття інформації</string>
+    <string name="prominent_disclosure_message">Додаток використовує службу доступності, щоб прослуховувати примусовий пароль на екрані блокування. Коли він знайдений, він може надіслати широкомовне повідомлення або стерти пристрій.</string>
+    <string name="accept">Прийняти</string>
+    <string name="exit">Вихід</string>
+    <string name="action">дія*</string>
+    <string name="receiver">приймач</string>
+    <string name="password_or_len">PIN-код/пароль або довжина*</string>
+    <string name="password_or_len_helper_text">Довжина має бути принаймні довжиною вашого PIN-коду/пароля не менше 2.</string>
+    <string name="tab_broadcast">ТРАНСЛЯЦІЯ</string>
+    <string name="tab_wipe">ОЧИЩЕННЯ</string>
+    <string name="tab_test">ТЕСТ</string>
+    <string name="keyguard_type">Блокування клавіш:</string>
+    <string name="keyguard_type_a">A</string>
+    <string name="keyguard_type_b">B (лише PIN-код)</string>
+    <string name="keyguard_type_description">Якщо ви використовуєте PIN-код/пароль (а не довжину), функція блокування клавіатури A вимагає відображення символів пароля під час введення. Блокування клавіатури B може залежати від мови (EN). Якщо ви змінили тип блокування клавіатури, перезапустіть службу доступності.</string>
+    <string name="authentication">Автентифікація</string>
+    <string name="notification_channel_default_name">За замовчуванням</string>
+    <string name="notification_title">Тест</string>
+</resources>

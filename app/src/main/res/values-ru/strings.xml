@@ -8,5 +8,4 @@
     <string name="exit">Выйти</string>
     <string name="action">Действие *</string>
     <string name="receiver">Получатель</string>
-    <string name="secret">Код аутентификации</string>
 </resources>

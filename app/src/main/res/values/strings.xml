@@ -8,7 +8,8 @@
     <string name="exit">Exit</string>
     <string name="action">action*</string>
     <string name="receiver">receiver</string>
-    <string name="secret">secret</string>
+    <string name="extra_key">key</string>
+    <string name="extra_value">value</string>
     <string name="password_or_len">PIN/password or length*</string>
     <string name="password_or_len_helper_text">The length has to be at least your PIN/password length plus two.</string>
     <string name="tab_broadcast">BROADCAST</string>

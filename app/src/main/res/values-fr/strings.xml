@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Duress</string>
+    <string name="service_unavailable_popup">Service indisponible</string>
+    <string name="prominent_disclosure_title">Divulgation Importante</string>
+    <string name="prominent_disclosure_message">L\'application utilise le service d\'accessibilité pour écouter un mot de passe de contrainte sur l\'écran de verrouillage. Une fois trouvé, il peut envoyer un message de diffusion ou effacer l\'appareil.</string>
+    <string name="accept">Accepter</string>
+    <string name="exit">Quitter</string>
+    <string name="action">action*</string>
+    <string name="receiver">récepteur</string>
+    <string name="password_or_len">Code PIN/mot de passe ou longueur*</string>
+    <string name="password_or_len_helper_text">La longueur doit être d\'au moins la longueur de votre code PIN/mot de passe plus deux.</string>
+    <string name="tab_broadcast">DIFFUSER</string>
+    <string name="tab_wipe">EFFACER</string>
+    <string name="tab_test">TEST</string>
+    <string name="keyguard_type">Garde-clefs:</string>
+    <string name="keyguard_type_a">A</string>
+    <string name="keyguard_type_b">B (PIN uniquement)</string>
+    <string name="keyguard_type_description">Si vous utilisez un code PIN/mot de passe (et non la longueur), le Garde-clefs A requiert que l\'option d\'affichage des caractères du mot de passe lors de la saisie soit activée. Garde-clefs B peut être dépendant de la langue (EN). Si vous changez le type de Garde-clefs, redémarrez le service d\'accessibilité.</string>
+    <string name="authentication">Authentification</string>
+    <string name="notification_channel_default_name">Défaut</string>
+    <string name="notification_title">Test</string>
+</resources>

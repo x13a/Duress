@@ -57,7 +57,6 @@ class MainActivity : AppCompatActivity() {
         prefsdb = Preferences(this, encrypted = false)
         prefs.copyTo(prefsdb)
         accessibilityManager = getSystemService(AccessibilityManager::class.java)
-        NotificationManager(this).createNotificationChannels()
     }
 
     private fun init2() {
@@ -66,7 +65,8 @@ class MainActivity : AppCompatActivity() {
             tabs.selectTab(tabs.getTabAt(prefs.mode))
             action.editText?.setText(prefs.action)
             receiver.editText?.setText(prefs.receiver)
-            secret.editText?.setText(prefs.secret)
+            extraKey.editText?.setText(prefs.extraKey)
+            extraValue.editText?.setText(prefs.extraValue)
             passwordOrLen.editText?.setText(prefs.passwordOrLen)
             keyguardType.check(when (prefs.keyguardType) {
                 KeyguardType.A.value -> R.id.keyguardTypeA
@@ -139,8 +139,11 @@ class MainActivity : AppCompatActivity() {
         receiver.editText?.doAfterTextChanged {
             prefs.receiver = it?.toString()?.trim() ?: ""
         }
-        secret.editText?.doAfterTextChanged {
-            prefs.secret = it?.toString()?.trim() ?: ""
+        extraKey.editText?.doAfterTextChanged {
+            prefs.extraKey = it?.toString()?.trim() ?: ""
+        }
+        extraValue.editText?.doAfterTextChanged {
+            prefs.extraValue = it?.toString()?.trim() ?: ""
         }
         passwordOrLen.editText?.doAfterTextChanged {
             prefs.passwordOrLen = it?.toString()?.trim() ?: ""
@@ -166,16 +169,21 @@ class MainActivity : AppCompatActivity() {
         val v = when (prefs.mode) {
             Mode.BROADCAST.value -> View.VISIBLE
             Mode.WIPE.value -> View.GONE
-            Mode.TEST.value -> View.GONE
+            Mode.TEST.value -> {
+                NotificationManager(this).createNotificationChannels()
+                View.GONE
+            }
             else -> View.GONE
         }
         binding.apply {
             action.visibility = v
             receiver.visibility = v
-            secret.visibility = v
+            extraKey.visibility = v
+            extraValue.visibility = v
             space1.visibility = v
             space2.visibility = v
             space3.visibility = v
+            space4.visibility = v
         }
     }
 

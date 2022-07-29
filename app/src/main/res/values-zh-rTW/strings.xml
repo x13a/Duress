@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">緊急脅迫</string>
+    <string name="service_unavailable_popup">服務無法使用</string>
+    <string name="prominent_disclosure_title">重要訊息揭露</string>
+    <string name="prominent_disclosure_message">這個APP使用無障礙服務來在鎖定螢幕上監聽脅迫密碼。當發現時會發送廣播訊息或清除裝置。</string>
+    <string name="accept">接受</string>
+    <string name="exit">離開</string>
+    <string name="action">動作*</string>
+    <string name="receiver">接收器</string>
+    <string name="password_or_len">PIN/密碼或長度*</string>
+    <string name="password_or_len_helper_text">長度至少要是你的PIN或密碼的長度加2</string>
+    <string name="tab_broadcast">廣播</string>
+    <string name="tab_wipe">清除裝置</string>
+    <string name="tab_test">測試</string>
+    <string name="keyguard_type">鍵盤類型:</string>
+    <string name="keyguard_type_a">A</string>
+    <string name="keyguard_type_b">B(僅限PIN)</string>
+    <string name="keyguard_type_description">如果你使用PIN或密碼(而非長度)，鍵盤A需要啟用輸入時顯示密碼字元之選項，鍵盤B可能限定語言(如英文)
+如果你改變鍵盤類型，需重啟無障礙服務</string>
+    <string name="authentication">驗證</string>
+    <string name="notification_channel_default_name">預設值</string>
+    <string name="notification_title">測試</string>
+</resources>

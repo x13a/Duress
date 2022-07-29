@@ -84,10 +84,10 @@
                 android:layout_marginVertical="5dp" />
 
             <com.google.android.material.textfield.TextInputLayout
-                android:id="@+id/secret"
+                android:id="@+id/extraKey"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="@string/secret">
+                android:hint="@string/extra_key">
 
                 <com.google.android.material.textfield.TextInputEditText
                     android:layout_width="match_parent"
@@ -97,6 +97,24 @@
 
             <Space
                 android:id="@+id/space3"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginVertical="5dp" />
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/extraValue"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="@string/extra_value">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content" />
+
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <Space
+                android:id="@+id/space4"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginVertical="5dp" />

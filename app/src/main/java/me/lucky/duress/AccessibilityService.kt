@@ -16,7 +16,6 @@ class AccessibilityService : AccessibilityService() {
     companion object {
         private const val MIN_KEYGUARD_LEN = 4
         private const val MIN_LEN = MIN_KEYGUARD_LEN + 2
-        private const val KEY = "code"
         private const val BUTTON_DELETE_DESC = "delete"
         private const val BUTTON_OK_DESC = "ok"
         private const val BUTTON_ENTER_DESC = "enter"
@@ -226,8 +225,8 @@ class AccessibilityService : AccessibilityService() {
                     )
             }
             addFlags(Intent.FLAG_INCLUDE_STOPPED_PACKAGES)
-            val secret = prefs.secret
-            if (secret.isNotEmpty()) putExtra(KEY, secret)
+            val extraKey = prefs.extraKey
+            if (extraKey.isNotEmpty()) putExtra(extraKey, prefs.extraValue)
         })
     }
 
