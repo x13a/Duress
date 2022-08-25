@@ -14,7 +14,6 @@
     <string name="tab_wipe">清除裝置</string>
     <string name="tab_test">測試</string>
     <string name="keyguard_type">鍵盤類型:</string>
-    <string name="keyguard_type_a">A</string>
     <string name="keyguard_type_b">B(僅限PIN)</string>
     <string name="keyguard_type_description">如果你使用PIN或密碼(而非長度)，鍵盤A需要啟用輸入時顯示密碼字元之選項，鍵盤B可能限定語言(如英文)
 如果你改變鍵盤類型，需重啟無障礙服務</string>
