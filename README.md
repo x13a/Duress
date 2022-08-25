@@ -19,6 +19,10 @@ Duress password trigger.
 Tiny app to listen for a duress password on the lockscreen.  
 When found, it can send a broadcast message or wipe the device.
 
+Also take a look at:
+* [Wasted](https://github.com/x13a/Wasted)
+* [Sentry](https://github.com/x13a/Sentry)
+
 ## Tested
 
 * Emulator, Android 12
