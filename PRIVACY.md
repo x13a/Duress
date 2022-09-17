@@ -1,3 +1,3 @@
 # Privacy Policy
 
-The app has nothing to store, but settings.
+The app Duress (me.lucky.duress) has nothing to store, but settings.
