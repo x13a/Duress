@@ -23,6 +23,8 @@ Also take a look at:
 * [Wasted](https://github.com/x13a/Wasted)
 * [Sentry](https://github.com/x13a/Sentry)
 
+Be aware that the app does not work in _safe mode_.
+
 ## Tested
 
 * Emulator, Android 12
