@@ -5,6 +5,8 @@ Also take a look at:
 * [Wasted](https://github.com/x13a/Wasted)
 * [Sentry](https://github.com/x13a/Sentry)
 
+Be aware that the app does not work in safe mode.
+
 Tested:
 * Emulator, Android 12
 * Google Pixel 4a/5a, Android 12
