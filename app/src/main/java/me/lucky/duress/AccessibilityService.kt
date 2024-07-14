@@ -99,15 +99,17 @@ class AccessibilityService : AccessibilityService() {
         }
     }
 
-    private fun checkKeyguardTypeAbyLen(event: AccessibilityEvent, len: Int) =
-        len >= MIN_LEN && event.text.size == 1 && event.text[0].length >= len
+    private fun checkKeyguardTypeAbyLen(event: AccessibilityEvent, len: Int): Boolean {
+        if (len < MIN_LEN || event.text.size != 1) return false
+        return (event.text.first() ?: return false).length >= len
+    }
 
     private fun checkKeyguardTypeAbyPassword(event: AccessibilityEvent, pw: String): Boolean {
         if (event.text.isEmpty()) {
             reset()
             return false
         }
-        val text = event.text[0]
+        val text = event.text.first() ?: return false
         if (pos > text.length) {
             if (pos > 0) {
                 pos--
@@ -139,13 +141,14 @@ class AccessibilityService : AccessibilityService() {
         if (len < MIN_LEN) return false
         var ok = false
         if (event.eventType == AccessibilityEvent.TYPE_ANNOUNCEMENT) {
-            if (event.text.size != 1) return false
-            val text = event.text[0]
-            if (text.startsWith(WRONG_TEXT, true) ||
-                text.startsWith(INCORRECT_TEXT, true))
-            {
-                ok = pos >= len
-                pos = 0
+            for (text in event.text.asSequence().filterNotNull()) {
+                if (text.startsWith(WRONG_TEXT, true) ||
+                    text.startsWith(INCORRECT_TEXT, true))
+                {
+                    ok = pos >= len
+                    pos = 0
+                    break
+                }
             }
             return ok
         }
@@ -170,13 +173,14 @@ class AccessibilityService : AccessibilityService() {
     private fun checkKeyguardTypeBbyPassword(event: AccessibilityEvent, pw: String): Boolean {
         var ok = false
         if (event.eventType == AccessibilityEvent.TYPE_ANNOUNCEMENT) {
-            if (event.text.size != 1) return false
-            val text = event.text[0]
-            if (text.startsWith(WRONG_TEXT, true) ||
-                text.startsWith(INCORRECT_TEXT, true))
-            {
-                if (pos == pw.length) ok = counter.all { it }
-                reset()
+            for (text in event.text.asSequence().filterNotNull()) {
+                if (text.startsWith(WRONG_TEXT, true) ||
+                    text.startsWith(INCORRECT_TEXT, true))
+                {
+                    if (pos == pw.length) ok = counter.all { it }
+                    reset()
+                    break
+                }
             }
             return ok
         }
