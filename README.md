@@ -1,5 +1,10 @@
 # Duress
 
+> [!WARNING]
+> Because Google has already shifted the DevicePolicyManager API, the app architecture will be 
+redesigned. The Device Policy features will become a standalone app acting as the Device Owner 
+core, and the other apps will request the required functionality from it.
+
 Duress password trigger.
 
 [<img
